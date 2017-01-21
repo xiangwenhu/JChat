@@ -1,4 +1,5 @@
-const app = require('koa')(),
+let Koa = require('koa'),
+  app = new Koa(),
   router = require('koa-router'),
   serve = require('koa-static'),
   fs = require('fs'),
@@ -10,26 +11,16 @@ const app = require('koa')(),
 
 
 // Send static files
-app.use(serve('./public'));
+app.use(serve('./client'));
 
 
-// Router
-app.use(router(app));
-
-// This must come after last app.use()
-var server = require('http').Server(app.callback()),
-  io = require('socket.io')(server);
-
-/**
- * Routes can go both before and after but
- * app.use(router(app)); must be before
- */
-app.get('/', function* (next) {
-  yield this.render('index', { my: 'data' });
-});
+// 这一行代码一定要在最后一个app.use后面使用
+var server = https.createServer(credentials,app.callback()),
+    io = require('socket.io')(server);
 
 // Socket.io
 io.on('connection', function (socket) {
+  console.log('done done done')
   socket.emit('news', { hello: 'world' });
   socket.on('my other event', function (data) {
     console.log(data);
@@ -37,5 +28,5 @@ io.on('connection', function (socket) {
 });
 
 // Start the server
-server.listen(1337);
-console.info('Now running on localhost:1337');
+server.listen(8081);
+console.info('Now running on localhost:8081'); 
