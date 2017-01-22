@@ -1,0 +1,56 @@
+
+#container{   
+    min-width: 800px;
+    max-width: 1200px;
+    margin: 100px auto;
+}
+
+#container .left,#container .center,#container .right{
+    border: solid 2px darkcyan;
+    min-height: 400px;
+}
+
+#container .left{
+    display: inline-block;
+    width: 200px;
+}
+
+#container .center{
+    vertical-align: top;   
+    display: inline-block;
+    width: 450px;
+}
+
+#container .right{
+    vertical-align: top;   
+    display: inline-block;
+    width: 200px;
+}
+
+#newRoomName{
+    width: 120px
+}
+
+#container  #msgContent{
+    height: 300px;
+    overflow-y: auto
+}
+
+#container  #inputContent{
+    float: left
+}
+
+#container  #btnSend{
+    height: 45px;
+}
+
+#rooms  li{
+    font-size: 16px;
+    line-height: 24px;
+}
+
+#rooms  li.selected {
+    background-color:cornflowerblue
+}
+
+

@@ -1,16 +1,46 @@
 <html>
 
 <head>
-    <title>hallo</title>
+    <title>JChat</title>
+    <link type="text/css" rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
 
 
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script>
-        var socket = io.connect('https://' + location.host)
-    </script>
-</body> 
+    <div id="container">
+        <div class="left">
+            <div>
+                房间名：<input id="newRoomName" maxlength="12" />
+            </div>
+
+            <label class="rooms-title">房间</label>
+            <ul id="rooms">
+            </ul>
+        </div>
+        <div class="center">
+            <div>
+                消息
+            </div>
+            <div id="msgContent">
+
+            </div>
+            <div>
+                <textarea cols="50" rows="3" id="inputContent"></textarea>
+                <input type="button" value="发送" id="btnSend" />
+            </div>
+        </div>
+        <div class="right">
+            <label class="rooms-title">房间成员(<span></span>)</label>
+            <ul id="members">
+            </ul>
+        </div>
+    </div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/chat.js"></script>
+    <script src="/index.js"></script>
+</body>
 
 </html>
