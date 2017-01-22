@@ -9,10 +9,6 @@ let Koa = require('koa'),
 
 const MAX_ROOM = 10
 
-
-
-
-
 // Send static files
 app.use(serve('./client'))
 
@@ -48,7 +44,7 @@ io.on('connection', function (socket) {
       //广播大家新人加入房间
       socket.emit('sysmessage', `进入房间 ${roomName}`)
       io.sockets.in(roomName).emit('sysmessage', `${userName} 进入了房间`)
-      io.sockets.in(roomName).emit('enterRoom',room)
+      io.sockets.in(roomName).emit('enterRoom', room)
       console.log(`${userName} 进入房间 ${roomName}`)
     } else {
       socket.emit('sysmessage', `房间 ${roomName} 不存在`)
@@ -58,7 +54,7 @@ io.on('connection', function (socket) {
   socket.on('leaveRoom', (userName, roomName) => {
     let room = rooms.get(roomName)
     if (room) {
-      socket.name = null
+      socket.rname = socket.uname == null
       let index = room.findIndex(s => {
         s == userName
       })
@@ -78,13 +74,12 @@ io.on('connection', function (socket) {
   })
 
   socket.on('message', (data) => {
-    io.sockets.to(socket.rname).emit('message', socket.uname + ':' + data)    
+    io.sockets.to(socket.rname).emit('message', socket.uname + ':' + data)
   })
 
-  socket.on('disconnect',()=>{
-    let room = rooms.get(socket.rname),
-        index = 0 
-      room && (index = room.findIndex(n=> n == socket.uname)) >= 0 &&  room.splice(index, 1)   
+  socket.on('disconnect', () => {
+    let room = rooms.get(socket.rname), index = 0
+    room && (index = room.findIndex(n => n == socket.uname)) >= 0 && room.splice(index, 1)
   })
 
 })
