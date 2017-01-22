@@ -33,8 +33,11 @@ io.on('connection', function (socket) {
   })
   //进入房间
   socket.on('enterRoom', (userName, roomName) => {
-    let room = rooms.get(roomName)
+    let room = rooms.get(roomName),index
     if (room) {
+      //先删除用户
+      (index = room.findIndex(n => n == socket.uname)) >= 0 && room.splice(index, 1)
+
       socket.rname = roomName
       socket.uname = userName
       //房间用户名
@@ -78,8 +81,10 @@ io.on('connection', function (socket) {
   })
 
   socket.on('disconnect', () => {
+    console.log('disconnect')
     let room = rooms.get(socket.rname), index = 0
     room && (index = room.findIndex(n => n == socket.uname)) >= 0 && room.splice(index, 1)
+    console.log(index)
   })
 
 })
