@@ -24,24 +24,36 @@ class WebRTC {
 
         //内部变量
         this.localStream = null //本地流
+        this.remoteStream = null //远程流
         this.guest = false  //时候是访客
         this.start = false  //时候开始
+        this.initailized = false
     }
 
     init() {
-        this.socket.on('webrtc', (type, data) => {
-            this.handleMessages(type, data)
-        })
+        if (!this.initailized) {
+            this.socket.on('webrtc', (type, data) => {
+                this.handleMessages(type, data)
+            })
+            this.initailized = true
+        }
         this.getUserMedia()
         this.socket.emit('webrtc', 'start')
     }
 
-    stop(callback) {
+    stop(callback, notice = false) {
+
+        this.pcLocal && this.pcLocal.close()
+        if (notice) {
+            this.socket && this.socket.emit('webrtc', 'close')
+        }
         this.start = this.guest = false
-        this.localStream = this.pcLocal = null
-        this.local.pause()
-        this.remote.pause()
-        callback()
+        //this.localStream = this.pcLocal = null
+        //this.local && (this.local.srcObject = null)        
+        //this.remote && (this.remote.srcObject = null)
+        this.stopMedia(this.remoteStream)
+        callback && callback()
+
     }
 
     handleMessages(type, data) {
@@ -72,6 +84,9 @@ class WebRTC {
             case 'answer':
                 console.log('receive answer')
                 this.pcLocal.setRemoteDescription(new RTCSessionDescription(data))
+                break
+            case 'close':
+                this.stop(null, false)
                 break
             case 'error':
                 alert(data.msg)
@@ -108,13 +123,13 @@ class WebRTC {
             }
         }
         this.pcLocal.oniceconnectionstatechange = () => {
-            console.log('iceConnectionState: ' + this.pcLocal.iceConnectionState)
+            console.log('iceConnectionState: ' + (this.pcLocal ? this.pcLocal.iceConnectionState : 'closed'))
         }
         this.pcLocal.onsignalingstatechange = () => {
-            console.log('signalingState: ' + this.pcLocal.signalingState)
+            console.log('signalingState: ' + (this.pcLocal ? this.pcLocal.signalingState : 'closed'))
         }
         this.pcLocal.onaddstream = (ev) => {
-            this.remote.srcObject = ev.stream
+            this.remoteStream = this.remote.srcObject = ev.stream
             this.remote.play()
         }
         this.pcLocal.addStream(this.localStream)
@@ -140,6 +155,17 @@ class WebRTC {
         sd.sdp = sd.sdp
         this.pcLocal.setLocalDescription(sd)
         this.socket.emit('webrtc', type, sd)
+    }
+
+    stopMedia(stream) {
+        if (stream) {
+            stream.getAudioTracks().forEach(function (track) {
+                track.stop()
+            })
+            stream.getVideoTracks().forEach(function (track) {
+                track.stop()
+            })
+        }
     }
 
     error(err) {

@@ -10,7 +10,9 @@ let userName = localStorage.getItem('_JCHAT_USER_NAME_'),
     btnSendEl = document.querySelector('#btnSend'),
     msgContentEl = document.querySelector('#msgContent'),
     membersEl = document.querySelector('#members'),
-    btnVideoEl = document.querySelector('#btnVideo')
+    btnVideoEl = document.querySelector('#btnVideo'),
+    videoContentEl = document.querySelector('#videoContent'),
+    btnClearEl = document.querySelector('#btnClear')
 
 
 //初始化聊天
@@ -78,13 +80,28 @@ btnSendEl.addEventListener('click', () => {
     }
 })
 
-let rtc
-btnVideoEl.addEventListener('click', () => {
-    rtc = new WebRTC({
-        socket: chat.getSocket()
-    })
-    rtc.init()
+let videoChat = false,rtc = new WebRTC({
+    socket: chat.getSocket()
 })
+btnVideoEl.addEventListener('click', () => {
+    if (!videoChat) {
+        btnVideoEl.value = '关闭视频'
+        videoContentEl.style.display = 'block'
+        msgContentEl.style.height = '120px'
+        rtc.init()
+    } else {
+        btnVideoEl.value = '视频聊天'
+        //msgContentEl.style.height = '300px'
+        //videoContentEl.style.display = 'none'
+        rtc.stop(null,true)
+    }
+    videoChat = !videoChat
+})
+
+btnClearEl.addEventListener('click', () => {
+    msgContentEl.innerHTML = ''
+})
+
 
 
 

@@ -22,16 +22,19 @@
             <div>
                 消息
             </div>
-            <div id="msgContent" style="display: none">
-
-            </div>
-            <div id="videoContent">
+            <div id="videoContent" style="display: none">
                 <video id="local" autoplay="true" muted="muted"></video>
                 <video id="remote" autoplay="true" muted="muted"></video>
             </div>
+            <div id="msgContent">
+
+            </div>
+            <div id="tools">
+                 <input type="button" value="视频聊天" id="btnVideo" />
+                 <input type="button" value="清   空" id="btnClear" />
+            </div>
             <div>
-                <textarea cols="50" rows="3" id="inputContent"></textarea>
-                <input type="button" value="视频" id="btnVideo" />
+                <textarea cols="50" rows="3" id="inputContent"></textarea>               
                 <input type="button" value="发送" id="btnSend" />
             </div>
         </div>

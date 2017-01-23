@@ -92,6 +92,7 @@ io.on('connection', function (socket) {
       case 'candidate':
       case 'offer':
       case 'answer':
+      case 'close':
         for (var clientId in rm.sockets) {
           var client = io.sockets.connected[clientId]
           if (client != socket) {
