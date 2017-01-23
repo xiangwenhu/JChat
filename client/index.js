@@ -53,10 +53,10 @@ if ((navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobi
     isMobile = true
 }
 //加入房间
-roomsEl.addEventListener(isMobile ? 'click' : 'dblclick', ev => {
+roomsEl.addEventListener('click', ev => {    
     let el = ev.target
     if (el.tagName == 'LI' && !el.classList.contains('selected')) {
-        [...el.parentElement.children].forEach(el => el.classList.remove('selected'))
+        Array.from(el.parentElement.children).forEach(el => el.classList.remove('selected'))
         el.classList.add('selected')
         chat.enterRoom(userName, el.text || el.textContent)
     }
