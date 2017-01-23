@@ -1,7 +1,12 @@
 class Chat {
     constructor(url) {
         this.socketUrl = url || 'https://' + location.host
-        this.rooms = []
+        this.rooms = []      
+        this.socket = null
+    }
+
+    getSocket(){
+        return this.socket
     }
 
     init(options = {}) {

@@ -9,7 +9,8 @@ let userName = localStorage.getItem('_JCHAT_USER_NAME_'),
     inputContentEl = document.querySelector('#inputContent'),
     btnSendEl = document.querySelector('#btnSend'),
     msgContentEl = document.querySelector('#msgContent'),
-    membersEl = document.querySelector('#members')
+    membersEl = document.querySelector('#members'),
+    btnVideoEl = document.querySelector('#btnVideo')
 
 
 //初始化聊天
@@ -18,7 +19,7 @@ chat.init({
     rooms(rooms) {
         roomsEl.innerHTML = rooms.map(r => '<li>' + r + '</li>').join('')
     },
-    enterRoom(users) {   
+    enterRoom(users) {
         membersEl.innerHTML = users.map(r => '<li>' + r + '</li>').join('')
         document.querySelector('.rooms-title span').textContent = users.length
     },
@@ -44,8 +45,13 @@ newRoomNameEl.addEventListener('keydown', (ev) => {
     }
 })
 
+
+let isMobile = false
+if ((navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i))) {
+    isMobile = true
+}
 //加入房间
-roomsEl.addEventListener('dblclick', ev => {
+roomsEl.addEventListener(isMobile ? 'click' : 'dblclick', ev => {
     let el = ev.target
     if (el.tagName == 'LI' && !el.classList.contains('selected')) {
         [...el.parentElement.children].forEach(el => el.classList.remove('selected'))
@@ -53,6 +59,7 @@ roomsEl.addEventListener('dblclick', ev => {
         chat.enterRoom(userName, el.text || el.textContent)
     }
 })
+
 
 
 //发送消息
@@ -69,6 +76,14 @@ btnSendEl.addEventListener('click', () => {
     if (msg) {
         chat.message(msg)
     }
+})
+
+let rtc
+btnVideoEl.addEventListener('click', () => {
+    rtc = new WebRTC({
+        socket: chat.getSocket()
+    })
+    rtc.init()
 })
 
 

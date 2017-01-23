@@ -33,7 +33,7 @@ io.on('connection', function (socket) {
   })
   //进入房间
   socket.on('enterRoom', (userName, roomName) => {
-    let room = rooms.get(roomName),index
+    let room = rooms.get(roomName), index
     if (room) {
       //先删除用户
       (index = room.findIndex(n => n == socket.uname)) >= 0 && room.splice(index, 1)
@@ -78,6 +78,28 @@ io.on('connection', function (socket) {
 
   socket.on('message', (data) => {
     io.sockets.to(socket.rname).emit('message', socket.uname + ':' + data)
+  })
+
+  socket.on('webrtc', (type, data) => {
+    let rm = io.sockets.adapter.rooms[socket.rname]
+
+    switch (type) {
+      case 'start':
+        if (rm && Object.keys(rm.sockets).length >= 2) {
+          socket.emit('webrtc', type, { guest: true })
+        }
+        break
+      case 'candidate':
+      case 'offer':
+      case 'answer':
+        for (var clientId in rm.sockets) {
+          var client = io.sockets.connected[clientId]
+          if (client != socket) {
+            client.emit('webrtc', type, data)
+          }
+        }
+        break
+    }
   })
 
   socket.on('disconnect', () => {

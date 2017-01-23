@@ -22,11 +22,16 @@
             <div>
                 消息
             </div>
-            <div id="msgContent">
+            <div id="msgContent" style="display: none">
 
+            </div>
+            <div id="videoContent">
+                <video id="local" autoplay="true" muted="muted"></video>
+                <video id="remote" autoplay="true" muted="muted"></video>
             </div>
             <div>
                 <textarea cols="50" rows="3" id="inputContent"></textarea>
+                <input type="button" value="视频" id="btnVideo" />
                 <input type="button" value="发送" id="btnSend" />
             </div>
         </div>
@@ -39,6 +44,7 @@
 
     <script src="/adapter.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/webRTC.js"></script>
     <script src="/chat.js"></script>
     <script src="/index.js"></script>
 </body>
