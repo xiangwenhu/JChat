@@ -90,8 +90,7 @@ btnSendEl.addEventListener('click', () => {
 btnVideoEl.addEventListener('click', () => {
     if (!videoChat) {
         btnVideoEl.value = '关闭视频'
-        videoContentEl.style.display = 'block'
-        msgContentEl.style.height = '120px'
+        videoContentEl.style.display = 'block'      
         rtc.init()
         rtc.start(chat.roomId)
     } else {
