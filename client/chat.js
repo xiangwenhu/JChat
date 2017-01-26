@@ -4,7 +4,10 @@ class Chat {
         this.rooms = []   //所在房间   
         this.socket = null
         this.id = null
+        this.roomId = null    //房间id
+        this.targetName = null
         this.userName = localStorage.getItem('_JCHAT_USER_NAME_')
+        
     }
 
     getSocket() {
@@ -22,28 +25,30 @@ class Chat {
 
         this.socket.on('chat', (type, data) => {
             switch (type) {
+                case 'enterRoom':
+                    this.roomId = data.roomId
+                    this.targetName = data.targetName
+                    typeof options[type] == 'function' && options[type](data)
+                    break
                 case 'allClients':
                 case 'message':
                 case 'sysmessage':
-                case 'enterRoom':
                     typeof options[type] == 'function' && options[type](data)
                     break
                 default:
                     break
             }
         })
-    }
 
-    //创建房间
-    createRoom(roomName) {
-        this.socket.emit('createRoom', roomName)
+        options.initCallback && options.initCallback(this.socket)
     }
     //进入房间
-    enterRoom(userName, roomName) {
-        this.socket.emit('enterRoom', userName, roomName)
+    enterRoom(targetId) {
+        this.roomId =  util.uuid()        
+        this.socket.emit('chat', 'enterRoom', { targetId,roomId:this.roomId})
     }
     //消息
     message(data) {
-        this.socket.emit('message', data)
+        this.socket.emit('chat', 'message', {roomId:this.roomId,data:data})
     }
 }

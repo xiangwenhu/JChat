@@ -26,7 +26,7 @@ class WebRTC {
         this.localStream = null //本地流
         this.remoteStream = null //远程流
         this.guest = false  //时候是访客
-        this.start = false  //时候开始
+        this.started = false  //时候开始
         this.initailized = false
     }
 
@@ -37,17 +37,21 @@ class WebRTC {
             })
             this.initailized = true
         }
-        this.getUserMedia()
-        this.socket.emit('webrtc', 'start')
+        this.roomId = null
+    }
+
+    start(roomId) {
+        this.roomId = roomId     
+        this.socket.emit('webrtc', 'start', roomId)
     }
 
     stop(callback, notice = false) {
 
-        this.pcLocal && this.pcLocal.close()
+        this.pcLocal && this.pcLocal.iceConnectionState != 'closed' && this.pcLocal.close()
         if (notice) {
-            this.socket && this.socket.emit('webrtc', 'close')
+            this.socket && this.socket.emit('webrtc', 'close', this.roomId)
         }
-        this.start = this.guest = false
+        this.started = this.guest = false
         //this.localStream = this.pcLocal = null
         //this.local && (this.local.srcObject = null)        
         //this.remote && (this.remote.srcObject = null)
@@ -59,8 +63,12 @@ class WebRTC {
     handleMessages(type, data) {
         switch (type) {
             case 'start':
+                console.log('starting ...')
                 if (data.guest && data.guest == true) {
                     this.guest = true
+                    this.getUserMedia()
+                }else{
+                    this.roomId = data.roomId
                     this.getUserMedia()
                 }
                 break
@@ -86,6 +94,7 @@ class WebRTC {
                 this.pcLocal.setRemoteDescription(new RTCSessionDescription(data))
                 break
             case 'close':
+                console.log('close')
                 this.stop(null, false)
                 break
             case 'error':
@@ -102,6 +111,7 @@ class WebRTC {
         }, (stream) => {
             this.localStream = this.local.srcObject = stream
             this.local.play()
+            //this.pcLocal && this.pcLocal.addStream(this.localStream)
             if (this.guest) {
                 this.call()
             }
@@ -109,13 +119,13 @@ class WebRTC {
     }
 
     call() {
-        if (this.start) return
-        this.start = true
+        if (this.started) return
+        this.started = true
         this.pcLocal = new RTCPeerConnection(this.config.pc_config, this.config.pc_constraints)
         this.pcLocal.onicecandidate = ev => {
             if (ev.candidate) {
                 console.log('send candidate')
-                this.socket.emit('webrtc', 'candidate', {
+                this.socket.emit('webrtc', 'candidate', this.roomId, {
                     label: ev.candidate.sdpMLineIndex,
                     id: ev.candidate.sdpMid,
                     candidate: ev.candidate.candidate
@@ -132,7 +142,7 @@ class WebRTC {
             this.remoteStream = this.remote.srcObject = ev.stream
             this.remote.play()
         }
-        this.pcLocal.addStream(this.localStream)
+        this.localStream && this.pcLocal.addStream(this.localStream)
 
         if (this.guest) {
             this.createOffer()
@@ -140,12 +150,14 @@ class WebRTC {
     }
 
     createOffer() {
+        console.log('create offer')
         this.pcLocal.createOffer(sd => {
             this.setLocalAndSendMessage('offer', sd)
         }, this.error, this.config.sdpConstraints)
     }
 
     createAnswer() {
+        console.log('create answer')
         this.pcLocal.createAnswer((sd) => {
             this.setLocalAndSendMessage('answer', sd)
         }, this.error, this.config.sdpConstraints)
@@ -154,7 +166,7 @@ class WebRTC {
     setLocalAndSendMessage(type, sd) {
         sd.sdp = sd.sdp
         this.pcLocal.setLocalDescription(sd)
-        this.socket.emit('webrtc', type, sd)
+        this.socket.emit('webrtc', type, this.roomId, sd)
     }
 
     stopMedia(stream) {

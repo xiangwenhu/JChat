@@ -20,68 +20,59 @@ var server = https.createServer(credentials, app.callback()),
 const rooms = new Map()
 const clients = {}
 // Socket.io
-io.on('connection', function (socket) { 
+io.on('connection', function (socket) {
 
   socket.on('chat', (type, data) => {
     switch (type) {
       case 'userName':
+        socket.uname = data
         clients[socket.id] = data
-        io.sockets.emit('chat','allClients',clients)
+        io.sockets.emit('chat', 'allClients', clients)
         break
       case 'rooms':
         break
-      case 'createRoom':
-        rooms.set(socket.id, rooms.get(socket.id) || [])
-        socket.emit('createRoom', { status: true })
-        break
       case 'enterRoom':
-        var roomName = socket.id,
-          userName = data.userName,
-          room = rooms.get(data.roomName), index
-        if (room) {
-          //先删除用户
-          (index = room.findIndex(n => n == socket.uname)) >= 0 && room.splice(index, 1)
-
-          socket.rname = roomName
-          socket.uname = userName
-          //房间用户名
-          room.push(userName)
-          //加入房间
-          socket.join(roomName)
-          //广播大家新人加入房间
-          socket.emit('sysmessage', `进入房间 ${roomName}`)
-          io.sockets.in(roomName).emit('sysmessage', `${userName} 进入了房间`)
-          io.sockets.in(roomName).emit('enterRoom', room)
-          console.log(`${userName} 进入房间 ${roomName}`)
-        } else {
-          socket.emit('sysmessage', `房间 ${roomName} 不存在`)
+        //发起方的id作为房间名        
+        if (data.roomId && data.targetId) {
+          socket.join(data.roomId)
+          var ts = io.sockets.sockets[data.targetId]
+          if (ts) {
+            ts.join(data.roomId)
+            //通知被加入方,
+            //TODO::多人聊天应该是向其他所有客户端
+            ts.emit('chat', 'enterRoom', { roomId: data.roomId, targetName: socket.uname })
+          }
         }
         break
       case 'message':
-        io.sockets.to(socket.rname).emit('message', socket.uname + ':' + data)
+        data.roomId && io.sockets.to(data.roomId).emit('chat', 'message', socket.uname + ':' + data.data)
         break
       default:
         break
     }
   })
 
-  socket.on('webrtc', (type, data) => {
-    let rm = io.sockets.adapter.rooms[socket.rname]
-
+  socket.on('webrtc', (type, roomId, data) => {
+    let rm = io.sockets.adapter.rooms[roomId]
     switch (type) {
       case 'start':
         if (rm && Object.keys(rm.sockets).length >= 2) {
-          socket.emit('webrtc', type, { guest: true })
+          for (let clientId in rm.sockets) {
+            let client = io.sockets.connected[clientId]
+            client != socket ? client.emit('webrtc', type, { guest: false, roomId }) : socket.emit('webrtc', type, { guest: true })
+          }
         }
         break
       case 'candidate':
       case 'offer':
       case 'answer':
       case 'close':
-        for (var clientId in rm.sockets) {
-          var client = io.sockets.connected[clientId]
-          if (client != socket) {
-            client.emit('webrtc', type, data)
+        if (rm) {
+          for (let clientId in rm.sockets) {
+            let client = io.sockets.connected[clientId]
+            if (client != socket) {
+              client.emit('webrtc', type, data)
+            }
           }
         }
         break
@@ -101,8 +92,8 @@ io.on('connection', function (socket) {
     //删除用户名
     let room = rooms.get(socket.rname), index = -1
     room && (index = room.findIndex(n => n == socket.uname)) >= 0 && room.splice(index, 1)
-   
-    io.sockets.emit('chat','allClients',clients)
+
+    io.sockets.emit('chat', 'allClients', clients)
     console.log('当前房间数量:' + rooms.size)
   })
 

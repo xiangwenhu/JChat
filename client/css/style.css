@@ -1,55 +1,64 @@
+html, body {
+    height: 100%;
+}
+
 
 #container{   
-    min-width: 800px;
-    max-width: 1200px;
-    margin: 100px auto;
+    min-width: 80%;
+    max-width: 90%;
+    height: 90%;
+    margin: 5% auto;
+    font-size: 2.0em;
 }
 
-#container .left,#container .center,#container .right{
+#container .slide{
     border: solid 2px darkcyan;
-    min-height: 400px;
+    height: 99%;
+    display: none;
+    background-color:rgba(210, 222,200,0.21)
 }
 
-#container .left{
-    display: inline-block;
-    width: 200px;
+#container .slide:first-child{
+    display: block
 }
 
-#container .center{
-    vertical-align: top;   
-    display: inline-block;
-    width: 450px;
+
+#container .chatClient{
+    text-align: center;
+    background-color:snow
 }
 
-#container .right{
-    vertical-align: top;   
-    display: inline-block;
-    width: 200px;
-}
-
-#newRoomName{
-    width: 120px
-}
 
 #container  #msgContent{
-    height: 300px;
+    height: 75%;
     overflow-y: auto
 }
 
 #container  #inputContent{
-    float: left
+    width: 99.5%;
+    font-size: 1.2em;
 }
 
 #container  #btnSend{
-    height: 45px;
+    font-size: 1em;
+    position: absolute;
+    right: 0;
+    bottom: 0;
 }
 
-#rooms  li{
-    font-size: 16px;
-    line-height: 24px;
+#container #tools{   
+    border: solid 2px papayawhip
 }
 
-#rooms  li.selected {
+#container #tools input{
+    font-size: 1em;
+}
+
+#allClients  li.me {
+    background-color:silver
+}
+
+#allClients  li.selected {
     background-color:cornflowerblue
 }
 
