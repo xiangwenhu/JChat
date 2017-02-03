@@ -40,13 +40,13 @@
 
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/sea.js"></script>
+    <script src="/js/sea.js"></script>
 
     <script>
         if (localStorage.getItem('_JCHAT_USER_NAME_') == null) {
             location.href = '/index.html'
         } else {
-            seajs.use("/index.js")
+            seajs.use("/js/index.js")
         }
     </script>
 

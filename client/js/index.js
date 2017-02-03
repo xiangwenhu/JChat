@@ -1,9 +1,9 @@
-define(function (require, exports, module) {
+define(function (require) {
 
-    require('/adapter.js')
-    const util = require('/util.js')
-    const WebRTC = require('/webrtc.js')
-    const Chat = require('/chat.js')
+    require('/js/adapter.js')
+    const WebRTC = require('/js/webrtc.js')
+    const Chat = require('/js/chat.js')
+    const Notify = require('/js/notify.js')
 
     let containsEl = document.querySelector('#container'),
         allClientsEl = containsEl.querySelector('#allClients'),
@@ -20,6 +20,7 @@ define(function (require, exports, module) {
 
     //初始化聊天
     let chat = new Chat(),
+        notify = new Notify(),
         videoChat = false, rtc
 
     chat.init({
@@ -36,9 +37,15 @@ define(function (require, exports, module) {
         },
         message(data) {
             msgContentEl.innerHTML += '<br/>' + data
+            msgContentEl.scrollTop = msgContentEl.scrollHeight
+
+            notify.pop('新消息',{
+                body: data
+            })
         },
         sysmessage(data) {
             msgContentEl.innerHTML += '<br/>' + data
+            msgContentEl.scrollTop = msgContentEl.scrollHeight
         },
         initCallback(socket) {
             rtc = new WebRTC({

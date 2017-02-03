@@ -1,6 +1,6 @@
 define(function (require, exports, module) {
 
-    const util = require('/util.js')
+    const util = require('/js/util.js')
 
     class Chat {
         constructor(url) {
