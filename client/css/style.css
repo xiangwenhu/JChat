@@ -1,15 +1,28 @@
 html, body {
     height: 100%;
 }
-
-
 #container{   
     min-width: 80%;
     max-width: 90%;
-    height: 90%;
-    margin: 5% auto;
+    height: 80%;
+    margin: 2% auto 0% auto;
     font-size: 4.0em;
 }
+
+#container .head-tab{
+    height: 10%;
+}
+
+#container .rooms-title{
+    border: rgba(110, 110, 1100, 0.21) 2px solid;
+    background-color: aliceblue;
+}
+
+#container .selected{
+    border: rgba(110, 110, 1100, 0.21) 2px solid;
+    background-color:#a8cbe9;
+}
+
 
 #container .slide{
     border: solid 2px darkcyan;

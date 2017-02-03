@@ -80,12 +80,13 @@ io.on('connection', function (socket) {
   })
 
   socket.on('disconnect', () => {
-    console.log('当前房间数量:' + rooms.size)
+    let rms = io.sockets.adapter.rooms
+    console.log('当前房间数量:' + Object.keys(rms).length)
     console.log(`${socket.uname} 离开了`)
 
     //删除client
     delete clients[socket.id]
-
+    
     //从所有加入的房间移除,这一步如果房间没有连接，会自动删除房间本身
     io.sockets.adapter.delAll(socket.id)
 
@@ -94,7 +95,7 @@ io.on('connection', function (socket) {
     room && (index = room.findIndex(n => n == socket.uname)) >= 0 && room.splice(index, 1)
 
     io.sockets.emit('chat', 'allClients', clients)
-    console.log('当前房间数量:' + rooms.size)
+    console.log('当前房间数量:' + Object.keys(rms).length)
   })
 
 })

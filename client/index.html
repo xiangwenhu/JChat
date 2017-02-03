@@ -1,47 +1,45 @@
-<!DOCTYPE html>
 <html>
 
-<head>
-    <title>JChat</title>
-    <link type="text/css" rel="stylesheet" href="/css/style.css">
-</head>
+<head></head>
+<style>
+    #container {
+        width: 800px;
+        margin: 80px auto 0;
+    }
+</style>
 
 <body>
-
-
     <div id="container">
-        <div class="slide-allusers slide">
-            <label class="rooms-title">所有用户</label>
-            <ul id="allClients">
-            </ul>
-        </div>
-        <div class="slide-chat slide">
-            <div class="chatClient">               
-            </div>
-            <div id="videoContent">
-                <video id="local" autoplay="true" muted="muted"></video>
-                <video id="remote" autoplay="true" muted="muted"></video>
-            </div>
-            <div id="msgContent">
-
-            </div>
-            <div id="tools">
-                <input type="button" value="视频聊天" id="btnVideo" />
-                <input type="button" value="清   空" id="btnClear" />
-            </div>
-            <div style="position: relative">
-                <textarea id="inputContent"></textarea>
-                <input type="button" value="发送" id="btnSend" />
-            </div>
-        </div>
+        用户名：<input id="inputUserName" required maxlength="12" /><input type="button" id="btnEnter" value="登录" />
     </div>
+    <script>
+        let userNameEl = document.querySelector('#inputUserName'),
+            btnEnterEl = document.querySelector('#btnEnter')
 
-    <script src="/adapter.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/util.js"></script>
-    <script src="/webrtc.js"></script>
-    <script src="/chat.js"></script>
-    <script src="/index.js"></script>
+        btnEnterEl.addEventListener('click', ev => {
+            login(userNameEl.value)
+        })
+
+        userNameEl.addEventListener('keydown', ev => {
+            if (ev.keyCode == 13) {
+                login(userNameEl.value)
+            }
+        })
+
+
+        function login(userName) {
+            if (!userName) {
+                alert('请输入用户名')
+                return
+            }
+            localStorage.setItem('_JCHAT_USER_NAME_', userName)
+            window.location.href = '/chat.html'
+        }
+
+        if (localStorage.getItem('_JCHAT_USER_NAME_') != null) {
+            window.location.href = '/chat.html'
+        }
+    </script>
 </body>
 
 </html>
