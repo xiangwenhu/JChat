@@ -5,7 +5,9 @@ define(function (require, exports, module) {
         constructor() {
             this.supported = window.Notification != null
             this.options = {
-
+                renotify:true,
+                noscreen:false,
+                tag:'jchat'
             }
             this.hiddenKey = Notify.getWindowHiddenKey()           
         }
@@ -21,8 +23,8 @@ define(function (require, exports, module) {
         }
 
         pop(title, options) {
-            //若是隐藏，弹出消息
-            if (document[this.hiddenKey]) {
+            //若是支持并且隐藏，弹出消息
+            if (this.supported && document[this.hiddenKey]) {
                 if (Notification.permission == 'granted') {
                     this.popNotify(title, options)
                 } else if (Notification.permission != 'denied') {

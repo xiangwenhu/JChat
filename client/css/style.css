@@ -44,8 +44,9 @@ html, body {
 
 #container  #msgContent{
     min-height: 25%;
-    max-height: 50%;
-    overflow-y: auto
+    max-height: 30%;
+    overflow-y: auto;
+    font-size: 0.25em;
 }
 
 #container  #inputContent{

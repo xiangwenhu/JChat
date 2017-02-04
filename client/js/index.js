@@ -38,9 +38,9 @@ define(function (require) {
         message(data) {
             msgContentEl.innerHTML += '<br/>' + data
             msgContentEl.scrollTop = msgContentEl.scrollHeight
-
+            let fromP = data.split(':')[0]
             notify.pop('新消息',{
-                body: data
+                body: `您有一条来自${fromP}的新消息，请注意查收`
             })
         },
         sysmessage(data) {
