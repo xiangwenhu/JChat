@@ -6,11 +6,12 @@ html, body {
     max-width: 90%;
     height: 80%;
     margin: 2% auto 0% auto;
-    font-size: 4.0em;
+    font-size: 2.0em;
 }
 
 #container .head-tab{
-    height: 10%;
+    height: 5%;
+    font-size: 0.8em
 }
 
 #container .rooms-title{
@@ -38,24 +39,25 @@ html, body {
 
 #container .chatClient{
     text-align: center;
+    font-size: 0.8em;
     background-color:snow
 }
 
 
 #container  #msgContent{
-    min-height: 25%;
-    max-height: 27%;
+    min-height: 70%;
+    max-height: 85%;
     overflow-y: auto;
-    font-size: 0.25em;
+    font-size: 0.5em;
 }
 
 #container  #inputContent{
     width: 99.5%;
-    font-size: 0.6em;
+    font-size: 0.8em;
 }
 
 #container  #btnSend{
-    font-size: 0.4em;
+    font-size: 0.8em;
     position: absolute;
     right: 0;
     bottom: 0;
@@ -63,13 +65,16 @@ html, body {
 
 #container #tools{   
     border: solid 2px papayawhip;
-    font-size: 0.6em
+    font-size: 0.8em
 }
 
 #container #tools input{
-    font-size: 0.5em;
+    font-size: 0.8em;
 }
 
+#allClients{
+    font-size: 
+}
 
 #allClients  li.me {   
     background-color:silver
