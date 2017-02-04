@@ -2,22 +2,42 @@ define(function (require, exports, module) {
 
     class Notify {
 
-        constructor() {
+        constructor(alwaysShow=false) {
             this.supported = window.Notification != null
             this.options = {
-                renotify:true,
-                noscreen:false,
-                tag:'jchat'
+                renotify: true,
+                noscreen: false,
+                tag: 'jchat',
+                sticky: true,
+                timestamp: 100
             }
-            this.hiddenKey = Notify.getWindowHiddenKey()           
+            this.hiddenKey = Notify.getWindowHiddenKey()
+            this.alwaysShow = alwaysShow || false
+            this.manualClosed = false
         }
 
         popNotify(title, options) {
             let opt = Object.assign({}, this.options, options)
             if (Notification.permission == 'granted') {
                 var notification = new Notification(title, opt)
-                notification.onclick = function () {
-                    notification.close()
+                this.initalizeNotification(notification,title,opt)
+            }
+        }
+
+        initalizeNotification(notification,title,options) {
+            notification.onclick = function () {
+                //返回消息窗口
+                window.focus()
+                //关闭消息框
+                this.manualClosed = true
+                notification.close()
+            }
+
+            notification.onclose = () => {
+                if (document[this.hiddenKey] && this.alwaysShow && !this.manualClosed) {
+                    this.manualClosed = false
+                    notification = new Notification(title, options)
+                    this.initalizeNotification(notification,title,options)
                 }
             }
         }

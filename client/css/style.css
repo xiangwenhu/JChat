@@ -44,29 +44,30 @@ html, body {
 
 #container  #msgContent{
     min-height: 25%;
-    max-height: 30%;
+    max-height: 27%;
     overflow-y: auto;
     font-size: 0.25em;
 }
 
 #container  #inputContent{
     width: 99.5%;
-    font-size: 1.2em;
+    font-size: 0.6em;
 }
 
 #container  #btnSend{
-    font-size: 1em;
+    font-size: 0.4em;
     position: absolute;
     right: 0;
     bottom: 0;
 }
 
 #container #tools{   
-    border: solid 2px papayawhip
+    border: solid 2px papayawhip;
+    font-size: 0.6em
 }
 
 #container #tools input{
-    font-size: 1em;
+    font-size: 0.5em;
 }
 
 

@@ -20,7 +20,7 @@ define(function (require) {
 
     //初始化聊天
     let chat = new Chat(),
-        notify = new Notify(),
+        notify = new Notify(true),
         videoChat = false, rtc
 
     chat.init({
@@ -70,9 +70,11 @@ define(function (require) {
     //发送消息
     inputContentEl.addEventListener('keydown', (ev) => {
         if (ev.keyCode == 13) {
+            ev.preventDefault()
             let msg = inputContentEl.value
             if (msg) {
                 chat.message(msg)
+                inputContentEl.value = ''
             }
         }
     })
