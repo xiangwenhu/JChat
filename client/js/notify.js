@@ -37,6 +37,8 @@ define(function (require, exports, module) {
                     this.manualClosed = false
                     notification = new Notification(title, options)
                     this.initalizeNotification(notification, title, options)
+                }else{
+                    this.manualClosed = false
                 }
             }
         }
