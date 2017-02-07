@@ -65,7 +65,8 @@ html, body {
 
 #container #tools{   
     border: solid 2px papayawhip;
-    font-size: 0.8em
+    font-size: 0.8em;
+    position: relative
 }
 
 #container #tools input{
@@ -88,4 +89,20 @@ html, body {
     width:40%;
     height:300px;
     background:#000;
+}
+
+
+#emojiWrapper {  
+    display: none;
+    width: 75%;
+    bottom: 1.2em;
+    position: absolute;
+    background-color: #aaa;
+    box-shadow: 0 0 10px #555;
+}
+#emojiWrapper img {
+    margin: 0.1em;
+    padding: 0.1em;
+    width: 1.5em;
+    height: 1.5em;
 }

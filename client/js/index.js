@@ -15,7 +15,8 @@ define(function (require) {
         btnVideoEl = containsEl.querySelector('#btnVideo'),
         videoContentEl = containsEl.querySelector('#videoContent'),
         btnClearEl = containsEl.querySelector('#btnClear'),
-        chatClientEl = containsEl.querySelector('.chatClient')
+        chatClientEl = containsEl.querySelector('.chatClient'),
+        emojiwrapperEl = containsEl.querySelector('#emojiWrapper')
 
 
     //初始化聊天
@@ -39,7 +40,7 @@ define(function (require) {
             msgContentEl.innerHTML += '<br/>' + data
             msgContentEl.scrollTop = msgContentEl.scrollHeight
             let fromP = data.split(':')[0]
-            notify.pop('新消息',{
+            notify.pop('新消息', {
                 body: `您有一条来自${fromP}的新消息，请注意查收`
             })
         },
@@ -102,14 +103,16 @@ define(function (require) {
         videoChat = !videoChat
     })
 
+    //清空
     btnClearEl.addEventListener('click', () => {
         msgContentEl.innerHTML = ''
     })
 
-    containsEl.querySelector('.head-tab').addEventListener('click',function(ev){
-        let  el = ev.target
-        if(el.tagName == 'LABEL'){
-            slideTo(el.getAttribute('data-tab'))            
+    //切换Tab
+    containsEl.querySelector('.head-tab').addEventListener('click', function (ev) {
+        let el = ev.target
+        if (el.tagName == 'LABEL') {
+            slideTo(el.getAttribute('data-tab'))
         }
     })
 
@@ -120,6 +123,45 @@ define(function (require) {
         //slide切换
         slidesEl.forEach((slide) => slide.classList.contains(`slide-${tag}`) ? slide.style.display = 'block' : slide.style.display = 'none')
     }
+
+    function initialEmoji() {
+        var emojiContainer = document.getElementById('emojiWrapper'),
+            docFragment = document.createDocumentFragment()
+        for (var i = 69; i > 0; i--) {
+            var emojiItem = document.createElement('img')
+            emojiItem.src = '/img/emoji/' + i + '.gif'
+            emojiItem.title = i
+            docFragment.appendChild(emojiItem)
+        }
+        emojiContainer.appendChild(docFragment)
+    }
+
+    //显示emoji
+    document.getElementById('btnEmoji').addEventListener('click', (ev) => {
+        emojiwrapperEl.style.display = 'block'
+        ev.stopPropagation()
+    })
+
+        //点击别处，隐藏emoji
+    document.body.addEventListener('click', function (e) {     
+        if (e.target != emojiwrapperEl) {
+            emojiwrapperEl.style.display = 'none'
+        }
+    })
+
+    //选择emoji
+    document.getElementById('emojiWrapper').addEventListener('click', function (ev) {
+        var target = ev.target
+        if (target.nodeName.toLowerCase() == 'img') {
+            inputContentEl.focus()
+            inputContentEl.value = inputContentEl.value + '[emoji:' + target.title + ']'
+        }
+    }, false)
+
+
+
+
+    initialEmoji()
 
 })
 
