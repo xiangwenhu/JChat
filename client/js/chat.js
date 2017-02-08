@@ -18,7 +18,7 @@ define(function (require, exports, module) {
             return this.socket
         }
 
-        init(options = {}) {
+        init(options = {},context) {
 
             this.socket = io.connect(this.socketUrl)
 
@@ -32,12 +32,12 @@ define(function (require, exports, module) {
                     case 'enterRoom':
                         this.roomId = data.roomId
                         this.targetName = data.targetName
-                        typeof options[type] == 'function' && options[type](data)
+                        typeof options[type] == 'function' && options[type].call(context,data)
                         break
                     case 'allClients':
                     case 'message':
                     case 'sysmessage':
-                        typeof options[type] == 'function' && options[type](data)
+                        typeof options[type] == 'function' &&  options[type].call(context,data)
                         break
                     default:
                         break
