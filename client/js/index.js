@@ -37,11 +37,10 @@ define(function (require) {
             chatClientEl.innerHTML = data.targetName
         },
         message(data) {
-            msgContentEl.innerHTML += '<br/>' + data
-            msgContentEl.scrollTop = msgContentEl.scrollHeight
-            let fromP = data.split(':')[0]
+            dispayMessage(data)
+
             notify.pop('新消息', {
-                body: `您有一条来自${fromP}的新消息，请注意查收`
+                body: `您有一条来自${data.from}的新消息，请注意查收`
             })
         },
         sysmessage(data) {
@@ -74,6 +73,10 @@ define(function (require) {
             ev.preventDefault()
             let msg = inputContentEl.value
             if (msg) {
+                dispayMessage({
+                    from: 'me',
+                    message: msg
+                })
                 chat.message(msg)
                 inputContentEl.value = ''
             }
@@ -82,6 +85,10 @@ define(function (require) {
     btnSendEl.addEventListener('click', () => {
         let msg = inputContentEl.value
         if (msg) {
+            dispayMessage({
+                from: '[__me__]',
+                message: msg
+            })
             chat.message(msg)
             inputContentEl.value = ''
         }
@@ -142,8 +149,8 @@ define(function (require) {
         ev.stopPropagation()
     })
 
-        //点击别处，隐藏emoji
-    document.body.addEventListener('click', function (e) {     
+    //点击别处，隐藏emoji
+    document.body.addEventListener('click', function (e) {
         if (e.target != emojiwrapperEl) {
             emojiwrapperEl.style.display = 'none'
         }
@@ -153,12 +160,46 @@ define(function (require) {
     document.getElementById('emojiWrapper').addEventListener('click', function (ev) {
         var target = ev.target
         if (target.nodeName.toLowerCase() == 'img') {
-            inputContentEl.focus()
-            inputContentEl.value = inputContentEl.value + '[emoji:' + target.title + ']'
+            dispayMessage({
+                from: '[__me__]',
+                message: '[emoji:' + target.title + ']'
+            })
+            chat.message('[emoji:' + target.title + ']')
         }
     }, false)
 
 
+    function dispayMessage(data) {
+        let msgToDisplay = document.createElement('p'),
+            date = new Date().toTimeString().substr(0, 8),
+            fromC = data.from,msg
+
+        //me替换    
+        if (data.from == '[__me__]') {
+            msgToDisplay.classList = fromC = 'me'
+        }
+        msg = showEmoji(data.message)
+        msgToDisplay.innerHTML = `${fromC}(${date})：${msg}`
+        msgContentEl.appendChild(msgToDisplay)
+        msgContentEl.scrollTop = msgContentEl.scrollHeight
+    }
+
+
+    function showEmoji(msg) {
+        var match, result = msg,
+            reg = /\[emoji:\d+\]/g,
+            emojiIndex,
+            totalEmojiNum = emojiwrapperEl.children.length
+        while (match = reg.exec(msg)) {
+            emojiIndex = match[0].slice(7, -1)
+            if (emojiIndex > totalEmojiNum) {
+                result = result.replace(match[0], '[X]')
+            } else {
+                result = result.replace(match[0], '<img class="emoji" src="/img/emoji/' + emojiIndex + '.gif" />')
+            }
+        }
+        return result
+    }
 
 
     initialEmoji()

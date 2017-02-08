@@ -52,8 +52,8 @@ define(function (require, exports, module) {
             this.socket.emit('chat', 'enterRoom', { targetId, roomId: this.roomId })
         }
         //消息
-        message(data) {
-            this.socket.emit('chat', 'message', { roomId: this.roomId, data: data })
+        message(msg) {
+            this.socket.emit('chat', 'message', { roomId: this.roomId, message: msg })
         }
     }
 

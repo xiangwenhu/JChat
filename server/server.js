@@ -45,7 +45,11 @@ io.on('connection', function (socket) {
         }
         break
       case 'message':
-        data.roomId && io.sockets.to(data.roomId).emit('chat', 'message', socket.uname + ':' + data.data)
+        //发给除自己外的客户端
+        data.roomId && socket.broadcast.to(data.roomId).emit('chat', 'message', {
+          from:socket.uname,
+          message:data.message
+        })
         break
       default:
         break

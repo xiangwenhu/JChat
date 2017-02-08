@@ -106,3 +106,22 @@ html, body {
     width: 1.5em;
     height: 1.5em;
 }
+
+
+
+#msgContent p{
+    margin: 0.25em
+}
+
+
+#msgContent img.emoji{
+    margin: 0.1em;
+    padding: 0.1em;
+    width: 3em;
+    height: 3em;
+}
+
+
+p.me{
+    color: cornflowerblue; 
+}
