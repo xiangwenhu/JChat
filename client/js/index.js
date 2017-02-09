@@ -20,13 +20,14 @@ define(function (require) {
             this.btnClearEl = this.containsEl.querySelector('#btnClear')
             this.chatClientEl = this.containsEl.querySelector('.chatClient')
             this.emojiwrapperEl = this.containsEl.querySelector('#emojiWrapper')
+            this.dialogEl = document.querySelector('#prompt_dialog')
 
             this.videoChat = false
             //初始化聊天
             this.chat = new Chat()
             this.notify = new Notify(true)
             this.rtc = null
-            
+
             this.initialEmoji()
         }
 
@@ -40,7 +41,7 @@ define(function (require) {
                     }
                     ).join('')
                 },
-                enterRoom(data) {                   
+                enterRoom(data) {
                     this.slideTo('chat')
                     this.chatClientEl.innerHTML = data.targetName
                 },
@@ -61,7 +62,7 @@ define(function (require) {
                     })
                     this.rtc.init()
                 }
-            },this)
+            }, this)
 
             this.registerEvents()
         }
@@ -83,31 +84,31 @@ define(function (require) {
             this.inputContentEl.addEventListener('keydown', ev => {
                 if (ev.keyCode == 13) {
                     ev.preventDefault()
-                    let msg = this.inputContentEl.value
+                    let msg = this.inputContentEl.innerHTML
                     if (msg) {
                         this.dispayMessage({
-                            from: 'me',
+                            from: '[__me__]',
                             message: msg
                         })
                         this.chat.message(msg)
-                        this.inputContentEl.value = ''
+                        this.inputContentEl.innerHTML = ''
                     }
                 }
             })
-
+            //发送消息
             this.btnSendEl.addEventListener('click', () => {
-                let msg = this.inputContentEl.value
+                let msg = this.inputContentEl.innerHTML
                 if (msg) {
                     this.dispayMessage({
                         from: '[__me__]',
                         message: msg
                     })
                     this.chat.message(msg)
-                    this.inputContentEl.value = ''
+                    this.inputContentEl.innerHTML = ''
                 }
             })
 
-
+            //视频聊天
             this.btnVideoEl.addEventListener('click', () => {
                 if (!this.videoChat) {
                     this.btnVideoEl.value = '关闭视频'
@@ -129,7 +130,7 @@ define(function (require) {
             })
 
             //切换Tab
-            this.containsEl.querySelector('.head-tab').addEventListener('click', ev=>{
+            this.containsEl.querySelector('.head-tab').addEventListener('click', ev => {
                 let el = ev.target
                 if (el.tagName == 'LABEL') {
                     this.slideTo(el.getAttribute('data-tab'))
@@ -143,14 +144,17 @@ define(function (require) {
             })
 
             //点击别处，隐藏emoji
-            document.body.addEventListener('click',  ev =>{
+            document.body.addEventListener('click', ev => {
                 if (ev.target != this.emojiwrapperEl) {
                     this.emojiwrapperEl.style.display = 'none'
+                }
+                if (ev.target != this.dialogEl) {
+                    this.dialogEl.style.display = 'none'
                 }
             })
 
             //选择emoji
-            document.getElementById('emojiWrapper').addEventListener('click', ev =>{
+            document.getElementById('emojiWrapper').addEventListener('click', ev => {
                 var target = ev.target
                 if (target.nodeName.toLowerCase() == 'img') {
                     this.dispayMessage({
@@ -160,6 +164,36 @@ define(function (require) {
                     this.chat.message('[emoji:' + target.title + ']')
                 }
             }, false)
+
+
+            //粘贴功能
+            this.inputContentEl.addEventListener('paste', (ev) => {
+                var items = (ev.clipboardData || ev.originalEvent.clipboardData).items
+                for (let index in items) {
+                    var item = items[index]
+                    if (FileReader && item.kind === 'file' && item.type.indexOf('image') === 0) {
+                        var blob = item.getAsFile()
+                        var reader = new FileReader()
+                        reader.onload = (ev) => {
+                            let pic = document.createElement('img')
+                            pic.src = ev.target.result
+                            this.appendInputMeesage(pic)
+                        }
+                        reader.readAsDataURL(blob)
+                        break
+                    }
+                }
+            })
+
+
+            //图片放大查看
+            this.msgContentEl.addEventListener('dblclick', (ev) => {
+                let el = ev.target
+                if (el.tagName.toUpperCase() == 'IMG') {
+                    this.displayOriginImage(el)
+                }
+            })
+
         }
 
         slideTo(tag) {
@@ -192,8 +226,14 @@ define(function (require) {
             }
             msg = this.showEmoji(data.message)
             msgToDisplay.innerHTML = `${fromC}(${date})：${msg}`
+
+
             this.msgContentEl.appendChild(msgToDisplay)
             this.msgContentEl.scrollTop = this.msgContentEl.scrollHeight
+        }
+
+        appendInputMeesage(content) {
+            this.inputContentEl.appendChild(content)
         }
 
 
@@ -211,6 +251,43 @@ define(function (require) {
                 }
             }
             return result
+        }
+
+        displayOriginImage(image) {
+            let pos = this.getPosition(), pic = document.createElement('img')
+            pic.src = image.src
+            this.dialogEl.innerHTML = ''
+            this.dialogEl.appendChild(pic)
+            this.dialogEl.style.display = 'block'
+            this.dialogEl.style.left = (pos.width - (pic.clientWidth > pos.width * 0.75 ? pos.width * 0.75 : pic.clientWidth)) / 2 + 'px'
+            this.dialogEl.style.top = (pos.height - (pic.clientHeight > pos.height * 0.75 ? pos.height * 0.75 : pic.clientHeight)) / 2 + 'px'
+            pic.style.maxHeight = pos.height * 0.75 + 'px'
+            pic.style.maxWidth = pos.width * 0.75 + 'px'
+
+        }
+
+        getPosition() {
+            var top, left, height, width, h, w
+            if (document.compatMode && document.compatMode != 'BackCompat') {
+                top = document.documentElement.scrollTop
+                left = document.documentElement.scrollLeft
+                height = document.documentElement.clientHeight
+                width = document.documentElement.clientWidth
+                h = document.documentElement.scrollHeight
+                w = document.documentElement.scrollWidth
+            } else {
+                top = document.body.scrollTop
+                left = document.body.scrollLeft
+                height = document.body.clientHeight
+                width = document.body.clientWidth
+                h = document.body.scrollHeight
+                w = document.body.scrollWidth
+            }
+            if (h < height) {
+                h = height
+                w = width
+            }
+            return { top: top, left: left, height: height, width: width, h: h, w: w, sw: window.screen.width, sh: window.screen.height }
         }
     }
 

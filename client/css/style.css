@@ -54,6 +54,14 @@ html, body {
 #container  #inputContent{
     width: 99.5%;
     font-size: 0.8em;
+    min-height: 2.5em;
+    border: solid 1px darkcyan
+}
+
+
+#container  #inputContent img{
+    height: 2.5em;
+    border: solid 1px #a8cbe9
 }
 
 #container  #btnSend{
@@ -73,9 +81,7 @@ html, body {
     font-size: 0.8em;
 }
 
-#allClients{
-    font-size: 
-}
+
 
 #allClients  li.me {   
     background-color:silver
@@ -114,6 +120,11 @@ html, body {
 }
 
 
+#msgContent img{
+    height: 3em;
+    border: solid 1px #a8cbe9
+}
+
 #msgContent img.emoji{
     margin: 0.1em;
     padding: 0.1em;
@@ -124,4 +135,22 @@ html, body {
 
 p.me{
     color: cornflowerblue; 
+}
+
+#prompt_dialog{
+    display: none;
+    border:1px solid gray;
+    position:absolute;
+    background: #f2f2f2;
+    top: 50%;
+    left: 50%;
+    padding:5px;
+    /* opacity:0.1;
+    -moz-opacity:0.1;
+    filter:alpha(opacity=10); */
+}
+
+#prompt_dialog img{
+    max-height: 900px;
+    max-width:1200px
 }

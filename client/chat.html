@@ -11,7 +11,7 @@
     <div id="container">
         <div class="head-tab">
             <label data-tab='allusers' class="rooms-title head-tab-allusers selected">所有用户</label>
-            <label data-tab = 'chat' class="rooms-title head-tab-chat">聊天室</label>
+            <label data-tab='chat' class="rooms-title head-tab-chat">聊天室</label>
         </div>
         <div class="slide-allusers slide" style="display: block">
             <ul id="allClients">
@@ -29,17 +29,19 @@
             </div>
             <div id="tools">
                 <input type="button" value="视频聊天" id="btnVideo" />
-                <input type="button" value="表情" id="btnEmoji"/>
+                <input type="button" value="表情" id="btnEmoji" />
                 <input type="button" value="清   空" id="btnClear" />
                 <div id="emojiWrapper"></div>
             </div>
             <div style="position: relative">
-                <textarea id="inputContent"></textarea>
+                <div id="inputContent" contenteditable="true"></div>
                 <input type="button" value="发送" id="btnSend" />
             </div>
         </div>
     </div>
 
+    <div id="prompt_dialog">       
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/sea.js"></script>
