@@ -45,8 +45,7 @@ html, body {
 
 
 #container  #msgContent{
-    min-height: 70%;
-    max-height: 85%;
+    height: 70%;   
     overflow-y: auto;
     font-size: 0.5em;
 }
@@ -63,6 +62,15 @@ html, body {
     height: 2.5em;
     border: solid 1px #a8cbe9
 }
+
+#inputContent.hover
+{
+	color: #f00;
+	border-color: #f00;
+	border-style: solid;
+	box-shadow: inset 0 3px 4px #888;
+}
+
 
 #container  #btnSend{
     font-size: 0.8em;

@@ -11,7 +11,7 @@ define(function (require) {
             this.containsEl = document.querySelector('#container')
             this.allClientsEl = this.containsEl.querySelector('#allClients')
             this.slidesEl = this.containsEl.querySelectorAll('.slide')
-            this.inputContentEl = this.containsEl.querySelector('#inputContent')
+            this.inputContentEl = document.querySelector('#inputContent')
             this.btnSendEl = this.containsEl.querySelector('#btnSend')
             this.msgContentEl = this.containsEl.querySelector('#msgContent')
             this.membersEl = this.containsEl.querySelector('#members')
@@ -129,13 +129,6 @@ define(function (require) {
                 this.msgContentEl.innerHTML = ''
             })
 
-            //切换Tab
-            this.containsEl.querySelector('.head-tab').addEventListener('click', ev => {
-                let el = ev.target
-                if (el.tagName == 'LABEL') {
-                    this.slideTo(el.getAttribute('data-tab'))
-                }
-            })
 
             //显示emoji
             document.getElementById('btnEmoji').addEventListener('click', ev => {
@@ -144,6 +137,7 @@ define(function (require) {
             })
 
             //点击别处，隐藏emoji
+
             document.body.addEventListener('click', ev => {
                 if (ev.target != this.emojiwrapperEl) {
                     this.emojiwrapperEl.style.display = 'none'
@@ -166,7 +160,7 @@ define(function (require) {
             }, false)
 
 
-            //粘贴功能
+            //粘贴功能            
             this.inputContentEl.addEventListener('paste', (ev) => {
                 var items = (ev.clipboardData || ev.originalEvent.clipboardData).items
                 for (let index in items) {
@@ -187,12 +181,30 @@ define(function (require) {
 
 
             //图片放大查看
-            this.msgContentEl.addEventListener('dblclick', (ev) => {
+            this.msgContentEl.addEventListener('dblclick', ev => {
                 let el = ev.target
                 if (el.tagName.toUpperCase() == 'IMG') {
                     this.displayOriginImage(el)
                 }
             })
+
+            //切换Tab
+            this.containsEl.querySelector('.head-tab').addEventListener('click', ev => {
+                let el = ev.target
+                if (el.tagName == 'LABEL') {
+                    this.slideTo(el.getAttribute('data-tab'))
+                }
+            })
+
+            //文件拖拽
+
+            this.inputContentEl.addEventListener('dragover', this.fileDragHover.bind(this), false)
+
+            this.inputContentEl.addEventListener('dragleave', this.fileDragHover.bind(this), false)
+
+            this.inputContentEl.addEventListener('drop', this.fileSelectHandler.bind(this), false)
+
+
 
         }
 
@@ -289,6 +301,47 @@ define(function (require) {
             }
             return { top: top, left: left, height: height, width: width, h: h, w: w, sw: window.screen.width, sh: window.screen.height }
         }
+
+
+        // file drag hover
+        fileDragHover(ev) {
+            console.log('dragging')
+            ev.stopPropagation()
+            ev.preventDefault()
+            ev.target.className = (ev.type == 'dragover' ? 'hover' : '')
+            return false
+        }
+
+
+        fileSelectHandler(ev) {
+            // cancel event and hover styling
+            this.fileDragHover(ev)
+            // fetch FileList object
+            var files = ev.target.files || ev.dataTransfer.files
+            // process all File objects
+            for (var i = 0, f; f = files[i]; i++) {
+                this.parseFile(f)
+                break
+            }
+            return false
+        }
+
+        parseFile(file) {
+            console.log(`<p>File information: <strong> +${file.name}</strong> 
+                type: <strong>  ${file.type} </strong> 
+                size: <strong>  ${file.size}</strong> bytes</p>`)
+            if (FileReader &&  file.type.indexOf('image') === 0) {                
+                var reader = new FileReader()
+                reader.onload = (ev) => {
+                    let pic = document.createElement('img')
+                    pic.src = ev.target.result
+                    this.appendInputMeesage(pic)
+                }
+                reader.readAsDataURL(file)               
+            }
+
+        }
+
     }
 
 
