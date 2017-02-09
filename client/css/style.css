@@ -4,7 +4,7 @@ html, body {
 #container{   
     min-width: 80%;
     max-width: 90%;
-    height: 80%;
+    height: 90%;
     margin: 2% auto 0% auto;
     font-size: 2.0em;
 }
