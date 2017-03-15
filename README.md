@@ -1,6 +1,6 @@
 # JChat <br/>
 做一个可以文本消息，图片，语音，视频的在线聊天。<br/>
-基于 nodejs + socket.io + webrtc <br/>
+基于 nodejs(7.2以上) + socket.io + webrtc <br/>
 <br/>
 <br/>
 安装和运行   <br/>
