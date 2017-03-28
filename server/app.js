@@ -2,9 +2,10 @@ let Koa = require('koa'),
   app = new Koa(),
   serve = require('koa-static'),
   fs = require('fs'),
+  path = require('path'),
   https = require('https'),
-  privateKey = fs.readFileSync('./cert/private.pem', 'utf8'),
-  certificate = fs.readFileSync('./cert/file.crt', 'utf8'),
+  privateKey = fs.readFileSync(path.join(__dirname, '/cert/private.pem'), 'utf8'),
+  certificate = fs.readFileSync(path.join(__dirname, './cert/file.crt'), 'utf8'),
   credentials = { key: privateKey, cert: certificate }
 
 //const MAX_ROOM = 10
@@ -47,8 +48,8 @@ io.on('connection', function (socket) {
       case 'message':
         //发给除自己外的客户端
         data.roomId && socket.broadcast.to(data.roomId).emit('chat', 'message', {
-          from:socket.uname,
-          message:data.message
+          from: socket.uname,
+          message: data.message
         })
         break
       default:
@@ -90,7 +91,7 @@ io.on('connection', function (socket) {
 
     //删除client
     delete clients[socket.id]
-    
+
     //从所有加入的房间移除,这一步如果房间没有连接，会自动删除房间本身
     io.sockets.adapter.delAll(socket.id)
 
