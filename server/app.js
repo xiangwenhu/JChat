@@ -5,7 +5,7 @@ let Koa = require('koa'),
   path = require('path'),
   https = require('https'),
   privateKey = fs.readFileSync(path.join(__dirname, '/cert/private.pem'), 'utf8'),
-  certificate = fs.readFileSync(path.join(__dirname, './cert/file.crt'), 'utf8'),
+  certificate = fs.readFileSync(path.join(__dirname, '/cert/file.crt'), 'utf8'),
   credentials = { key: privateKey, cert: certificate }
 
 //const MAX_ROOM = 10
